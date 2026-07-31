@@ -157,6 +157,10 @@ function App() {
         </div>
       </div>
 
+      <div className="watermark-logo">
+        <img src="/logo.png" alt="T5S Watermark" />
+      </div>
+
       <Globe
         ref={globeEl}
         globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
@@ -175,12 +179,11 @@ function App() {
         }}
         objectThreeObject={(obj) => {
           const isSelected = selectedSatName === obj.name;
-          // Made the clickable targets bigger so they are easier to hit
           const geometry = new THREE.SphereGeometry(isSelected ? 2.0 : 1.2, 16, 16);
           const material = new THREE.MeshBasicMaterial({ 
-            color: isSelected ? '#ff3366' : '#00ffcc',
+            color: '#ffffff',
             transparent: true,
-            opacity: isSelected ? 1 : 0.8
+            opacity: isSelected ? 1 : 0.6
           });
           return new THREE.Mesh(geometry, material);
         }}
