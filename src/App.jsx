@@ -114,9 +114,14 @@ function App() {
         </div>
       </div>
       
-      <div className="stats-panel">
-        <div><strong>ACTIVE CONTACTS:</strong> {satPositions.length}</div>
-        <div><strong>SYS TIME:</strong> {time.toISOString().split('T')[1].split('.')[0]} UTC</div>
+      <div className="bottom-panel">
+        <div className="watermark-logo">
+          <img src="/logo.png" alt="T5S Watermark" />
+        </div>
+        <div className="stats-panel">
+          <div><strong>ACTIVE CONTACTS:</strong> {satPositions.length}</div>
+          <div><strong>SYS TIME:</strong> {time.toISOString().split('T')[1].split('.')[0]} UTC</div>
+        </div>
       </div>
 
       {activeSat && (
