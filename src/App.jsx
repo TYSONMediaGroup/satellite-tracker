@@ -37,10 +37,9 @@ function App() {
   }, []);
 
   useEffect(() => {
-    // Auto-rotate globe slightly
+    // Disable auto-rotate so they are easier to click
     if (globeEl.current) {
-      globeEl.current.controls().autoRotate = true;
-      globeEl.current.controls().autoRotateSpeed = 0.5;
+      globeEl.current.controls().autoRotate = false;
     }
   }, []);
 
@@ -133,6 +132,26 @@ function App() {
         </div>
       )}
 
+      <div className="roster-panel">
+        <div className="roster-header">SATELLITE ROSTER</div>
+        <div className="roster-list">
+          {satPositions.map((sat, i) => (
+            <button 
+              key={i} 
+              className={`roster-item ${selectedSatName === sat.name ? 'active' : ''}`}
+              onClick={() => {
+                setSelectedSatName(sat.name);
+                if (globeEl.current) {
+                  globeEl.current.pointOfView({ lat: sat.lat, lng: sat.lng, altitude: 2 }, 1000);
+                }
+              }}
+            >
+              {sat.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <Globe
         ref={globeEl}
         globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
@@ -151,7 +170,8 @@ function App() {
         }}
         objectThreeObject={(obj) => {
           const isSelected = selectedSatName === obj.name;
-          const geometry = new THREE.SphereGeometry(isSelected ? 1.0 : 0.5, 16, 16);
+          // Made the clickable targets bigger so they are easier to hit
+          const geometry = new THREE.SphereGeometry(isSelected ? 2.0 : 1.2, 16, 16);
           const material = new THREE.MeshBasicMaterial({ 
             color: isSelected ? '#ff3366' : '#00ffcc',
             transparent: true,
