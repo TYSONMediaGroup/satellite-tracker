@@ -87,13 +87,18 @@ function App() {
     const name = activeSat.name.toUpperCase();
     if (name.includes('STARLINK')) operator = "SpaceX";
     else if (name.includes('ONEWEB')) operator = "OneWeb";
-    else if (name.includes('NOAA')) operator = "NOAA (USA)";
+    else if (name.includes('NOAA') || name.includes('GOES') || name.includes('EWS-G') || name.includes('SUOMI')) operator = "NOAA (USA)";
+    else if (name.includes('DMSP')) operator = "US Department of Defense";
     else if (name.includes('ISS')) operator = "NASA / Roscosmos";
     else if (name.includes('GPS') || name.includes('NAVSTAR')) operator = "US Space Force";
     else if (name.includes('GALILEO')) operator = "European Space Agency";
-    else if (name.includes('GLONASS') || name.includes('COSMOS')) operator = "Roscosmos (Russia)";
+    else if (name.includes('METEOSAT') || name.includes('METOP')) operator = "EUMETSAT (Europe)";
+    else if (name.includes('GLONASS') || name.includes('COSMOS') || name.includes('METEOR') || name.includes('ELEKTRO')) operator = "Roscosmos (Russia)";
     else if (name.includes('IRIDIUM')) operator = "Iridium Communications";
-    else if (name.includes('BEIDOU')) operator = "CNSA (China)";
+    else if (name.includes('BEIDOU') || name.includes('FENGYUN')) operator = "CNSA (China)";
+    else if (name.includes('INSAT')) operator = "ISRO (India)";
+    else if (name.includes('HIMAWARI')) operator = "JMA (Japan)";
+    else if (name.includes('COMS')) operator = "KARI (South Korea)";
   }
 
   return (
