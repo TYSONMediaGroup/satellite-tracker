@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Globe from 'react-globe.gl';
 import * as satellite from 'satellite.js';
+import * as THREE from 'three';
 import './index.css';
 
 function App() {
@@ -94,10 +95,11 @@ function App() {
         objectLng="lng"
         objectAltitude="alt"
         objectLabel="name"
-        objectColor={() => 'rgba(0, 255, 204, 0.8)'}
         objectThreeObject={() => {
-          // Fallback simple dot if custom geometry isn't needed
-          return undefined; 
+          // Create a glowing sphere for the satellite
+          const geometry = new THREE.SphereGeometry(0.5, 8, 8);
+          const material = new THREE.MeshBasicMaterial({ color: '#00ffcc' });
+          return new THREE.Mesh(geometry, material);
         }}
       />
     </div>
