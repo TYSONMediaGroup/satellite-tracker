@@ -1,0 +1,107 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #000;
+  font-family: 'Courier New', Courier, monospace;
+  color: #00ffcc;
+}
+
+.app-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+.header {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid #00ffcc;
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+  backdrop-filter: blur(4px);
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+  margin-right: 20px;
+  filter: drop-shadow(0 0 5px #00ffcc);
+}
+
+.header-text h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  text-shadow: 0 0 5px #00ffcc;
+}
+
+.header-text p {
+  margin: 5px 0 0 0;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.live-badge {
+  margin-left: 30px;
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #ff3366;
+  text-shadow: 0 0 5px #ff3366;
+}
+
+.pulse {
+  width: 10px;
+  height: 10px;
+  background-color: #ff3366;
+  border-radius: 50%;
+  margin-right: 8px;
+  box-shadow: 0 0 8px #ff3366;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 51, 102, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); }
+}
+
+.stats-panel {
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid #00ffcc;
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+  backdrop-filter: blur(4px);
+  text-align: right;
+  line-height: 1.8;
+}
+
+/* CRT Scanlines Overlay */
+.app-container::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 20;
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+}
