@@ -11,8 +11,8 @@ function App() {
   const [selectedSatName, setSelectedSatName] = useState(null);
 
   useEffect(() => {
-    // Fetch live TLE data from CelesTrak (Active Satellites)
-    fetch('https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle')
+    // Fetch live TLE data from CelesTrak (Starlink fleet to bypass 'active' rate limits)
+    fetch('https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=tle')
       .then(r => r.text())
       .then(rawData => {
         const tleData = rawData.replace(/\r/g, '').split('\n');
@@ -82,6 +82,20 @@ function App() {
   }, [satData, time]);
 
   const activeSat = selectedSatName ? satPositions.find(s => s.name === selectedSatName) : null;
+  
+  let operator = "Unknown / Classified";
+  if (activeSat) {
+    const name = activeSat.name.toUpperCase();
+    if (name.includes('STARLINK')) operator = "SpaceX";
+    else if (name.includes('ONEWEB')) operator = "OneWeb";
+    else if (name.includes('NOAA')) operator = "NOAA (USA)";
+    else if (name.includes('ISS')) operator = "NASA / Roscosmos";
+    else if (name.includes('GPS') || name.includes('NAVSTAR')) operator = "US Space Force";
+    else if (name.includes('GALILEO')) operator = "European Space Agency";
+    else if (name.includes('GLONASS') || name.includes('COSMOS')) operator = "Roscosmos (Russia)";
+    else if (name.includes('IRIDIUM')) operator = "Iridium Communications";
+    else if (name.includes('BEIDOU')) operator = "CNSA (China)";
+  }
 
   return (
     <div className="app-container">
@@ -108,6 +122,9 @@ function App() {
             <button onClick={() => setSelectedSatName(null)}>×</button>
           </div>
           <div className="sat-info-body">
+            <p style={{borderBottom: '1px solid rgba(255, 51, 102, 0.3)', paddingBottom: '10px', marginBottom: '10px'}}>
+              <strong>OPERATOR:</strong> {operator}
+            </p>
             <p><strong>LAT:</strong> {activeSat.lat.toFixed(4)}°</p>
             <p><strong>LNG:</strong> {activeSat.lng.toFixed(4)}°</p>
             <p><strong>ALT:</strong> {Math.round(activeSat.realAlt)} km</p>
