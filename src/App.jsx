@@ -8,6 +8,7 @@ function App() {
   const globeEl = useRef();
   const [satData, setSatData] = useState([]);
   const [time, setTime] = useState(new Date());
+  const [selectedSatName, setSelectedSatName] = useState(null);
 
   useEffect(() => {
     // Fetch live TLE data from CelesTrak (Active Satellites)
@@ -51,6 +52,16 @@ function App() {
         const positionEci = positionAndVelocity.position;
         if (!positionEci) return null;
         
+        const velocityEci = positionAndVelocity.velocity;
+        let velocityKps = 0;
+        if (velocityEci) {
+          velocityKps = Math.sqrt(
+            Math.pow(velocityEci.x, 2) +
+            Math.pow(velocityEci.y, 2) +
+            Math.pow(velocityEci.z, 2)
+          );
+        }
+
         const positionGd = satellite.eciToGeodetic(positionEci, gmst);
         const longitude = satellite.degreesLong(positionGd.longitude);
         const latitude = satellite.degreesLat(positionGd.latitude);
@@ -60,13 +71,17 @@ function App() {
           ...d,
           lat: latitude,
           lng: longitude,
-          alt: alt / 6371 // scale to globe radius
+          alt: alt / 6371, // scale to globe radius
+          realAlt: alt,
+          velocity: velocityKps
         };
       } catch (e) {
         return null;
       }
     }).filter(d => d !== null);
   }, [satData, time]);
+
+  const activeSat = selectedSatName ? satPositions.find(s => s.name === selectedSatName) : null;
 
   return (
     <div className="app-container">
@@ -86,6 +101,21 @@ function App() {
         <div><strong>SYS TIME:</strong> {time.toISOString().split('T')[1].split('.')[0]} UTC</div>
       </div>
 
+      {activeSat && (
+        <div className="sat-info-panel">
+          <div className="sat-info-header">
+            <h3>{activeSat.name}</h3>
+            <button onClick={() => setSelectedSatName(null)}>×</button>
+          </div>
+          <div className="sat-info-body">
+            <p><strong>LAT:</strong> {activeSat.lat.toFixed(4)}°</p>
+            <p><strong>LNG:</strong> {activeSat.lng.toFixed(4)}°</p>
+            <p><strong>ALT:</strong> {Math.round(activeSat.realAlt)} km</p>
+            <p><strong>VEL:</strong> {activeSat.velocity.toFixed(2)} km/s</p>
+          </div>
+        </div>
+      )}
+
       <Globe
         ref={globeEl}
         globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
@@ -95,10 +125,21 @@ function App() {
         objectLng="lng"
         objectAltitude="alt"
         objectLabel="name"
-        objectThreeObject={() => {
-          // Create a glowing sphere for the satellite
-          const geometry = new THREE.SphereGeometry(0.5, 8, 8);
-          const material = new THREE.MeshBasicMaterial({ color: '#00ffcc' });
+        onObjectClick={(obj) => {
+          setSelectedSatName(obj.name);
+          // Optional: auto-rotate to selected satellite
+          if (globeEl.current) {
+            globeEl.current.pointOfView({ lat: obj.lat, lng: obj.lng, altitude: 2 }, 1000);
+          }
+        }}
+        objectThreeObject={(obj) => {
+          const isSelected = selectedSatName === obj.name;
+          const geometry = new THREE.SphereGeometry(isSelected ? 1.0 : 0.5, 16, 16);
+          const material = new THREE.MeshBasicMaterial({ 
+            color: isSelected ? '#ff3366' : '#00ffcc',
+            transparent: true,
+            opacity: isSelected ? 1 : 0.8
+          });
           return new THREE.Mesh(geometry, material);
         }}
       />

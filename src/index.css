@@ -105,3 +105,61 @@ body, html {
   background-size: 100% 2px, 3px 100%;
   pointer-events: none;
 }
+
+.sat-info-panel {
+  position: absolute;
+  top: 120px;
+  left: 20px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid #ff3366;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(255, 51, 102, 0.3);
+  backdrop-filter: blur(8px);
+  min-width: 300px;
+  color: #ff3366;
+}
+
+.sat-info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid rgba(255, 51, 102, 0.3);
+}
+
+.sat-info-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px #ff3366;
+}
+
+.sat-info-header button {
+  background: none;
+  border: none;
+  color: #ff3366;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0 5px;
+}
+
+.sat-info-header button:hover {
+  text-shadow: 0 0 8px #ff3366;
+}
+
+.sat-info-body {
+  padding: 15px;
+  line-height: 1.8;
+  font-size: 0.9rem;
+}
+
+.sat-info-body p {
+  margin: 5px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.sat-info-body strong {
+  color: #00ffcc;
+}
