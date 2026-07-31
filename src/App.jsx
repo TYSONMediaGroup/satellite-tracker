@@ -101,6 +101,12 @@ function App() {
     else if (name.includes('COMS')) operator = "KARI (South Korea)";
   }
 
+  // Performance optimization: Cache the 3D geometries and materials
+  const baseGeometry = useMemo(() => new THREE.SphereGeometry(1.2, 8, 8), []);
+  const selectedGeometry = useMemo(() => new THREE.SphereGeometry(2.0, 16, 16), []);
+  const baseMaterial = useMemo(() => new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.6 }), []);
+  const selectedMaterial = useMemo(() => new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 1 }), []);
+
   return (
     <div className="app-container">
       <div className="header">
@@ -183,13 +189,10 @@ function App() {
         }}
         objectThreeObject={(obj) => {
           const isSelected = selectedSatName === obj.name;
-          const geometry = new THREE.SphereGeometry(isSelected ? 2.0 : 1.2, 16, 16);
-          const material = new THREE.MeshBasicMaterial({ 
-            color: '#ffffff',
-            transparent: true,
-            opacity: isSelected ? 1 : 0.6
-          });
-          return new THREE.Mesh(geometry, material);
+          return new THREE.Mesh(
+            isSelected ? selectedGeometry : baseGeometry, 
+            isSelected ? selectedMaterial : baseMaterial
+          );
         }}
       />
     </div>

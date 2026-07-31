@@ -234,3 +234,59 @@ body, html {
   color: #fff;
   text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
 }
+
+@media (max-width: 768px) {
+  .header {
+    top: 15px;
+    left: 15px;
+  }
+  
+  .header-text h1 {
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+  }
+
+  .header-text p {
+    font-size: 0.8rem;
+  }
+
+  .live-badge {
+    margin-left: 10px;
+    font-size: 0.8rem;
+  }
+
+  .bottom-panel {
+    bottom: 15px;
+    left: 15px;
+    gap: 15px;
+  }
+
+  .watermark-logo img {
+    width: 50px;
+  }
+
+  .stats-panel {
+    font-size: 0.85rem;
+  }
+
+  .sat-info-panel {
+    top: auto;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    min-width: 0;
+  }
+
+  .roster-panel {
+    top: 80px;
+    right: 10px;
+    width: 200px;
+    bottom: 280px;
+  }
+
+  .roster-item {
+    font-size: 0.9rem;
+    padding: 6px 10px;
+  }
+}
