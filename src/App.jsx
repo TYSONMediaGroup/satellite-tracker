@@ -12,7 +12,7 @@ function App() {
 
   useEffect(() => {
     // Fetch live TLE data from the locally cached dataset to bypass CORS/rate limits
-    fetch('/starlink.txt')
+    fetch('/data.txt')
       .then(r => r.text())
       .then(rawData => {
         const tleData = rawData.replace(/\r/g, '').split('\n');
