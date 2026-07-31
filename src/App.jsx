@@ -104,10 +104,9 @@ function App() {
   return (
     <div className="app-container">
       <div className="header">
-        <img src="/logo.png" alt="T5S" className="logo" />
         <div className="header-text">
-          <h1>ORBITAL RADAR</h1>
-          <p>Live Satellite Tracking • T5S Network</p>
+          <h1>TYSON Malik Satellite Radar</h1>
+          <p>malik.myt5s.tysonmediagroup.org</p>
         </div>
         <div className="live-badge">
           <div className="pulse"></div> LIVE
