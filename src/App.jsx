@@ -11,8 +11,8 @@ function App() {
   const [selectedSatName, setSelectedSatName] = useState(null);
 
   useEffect(() => {
-    // Fetch live TLE data from CelesTrak (Starlink fleet to bypass 'active' rate limits)
-    fetch('https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=tle')
+    // Fetch live TLE data from the locally cached dataset to bypass CORS/rate limits
+    fetch('/starlink.txt')
       .then(r => r.text())
       .then(rawData => {
         const tleData = rawData.replace(/\r/g, '').split('\n');
