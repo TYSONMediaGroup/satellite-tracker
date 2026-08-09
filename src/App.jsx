@@ -9,28 +9,47 @@ function App() {
   const [satData, setSatData] = useState([]);
   const [time, setTime] = useState(new Date());
   const [selectedSatName, setSelectedSatName] = useState(null);
+  const [showSplash, setShowSplash] = useState(true);
 
   useEffect(() => {
-    // Fetch live TLE data from the locally cached dataset to bypass CORS/rate limits
-    fetch('/data.txt')
-      .then(r => r.text())
-      .then(rawData => {
-        const tleData = rawData.replace(/\r/g, '').split('\n');
-        const sats = [];
-        // Only load a subset (e.g. 500) to keep it performant
-        for (let i = 0; i < 1500; i += 3) {
-          if (!tleData[i] || !tleData[i+1] || !tleData[i+2]) break;
-          const name = tleData[i].trim();
-          const tle1 = tleData[i + 1].trim();
-          const tle2 = tleData[i + 2].trim();
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    // Fetch live TLE data from Celestrak + locally cached dataset
+    Promise.all([
+      fetch('https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle').then(r => r.text()).catch(() => ''),
+      fetch('/data.txt').then(r => r.text()).catch(() => '')
+    ]).then(results => {
+      const rawData = results.join('\n');
+      const lines = rawData.replace(/\r/g, '').split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      const sats = [];
+      const seen = new Set();
+      
+      // Load a larger subset (up to 3000 satellites)
+      for (let i = 0; i < lines.length - 2; i++) {
+        if (sats.length >= 3000) break;
+        // Check if current line is name, next is line 1, next is line 2
+        if (lines[i+1] && lines[i+1].startsWith('1 ') && lines[i+2] && lines[i+2].startsWith('2 ')) {
+          const name = lines[i];
+          const tle1 = lines[i + 1];
+          const tle2 = lines[i + 2];
           
-          try {
-            const satrec = satellite.twoline2satrec(tle1, tle2);
-            sats.push({ name, satrec, tle1, tle2 });
-          } catch(e) {}
+          if (!seen.has(name)) {
+            seen.add(name);
+            try {
+              const satrec = satellite.twoline2satrec(tle1, tle2);
+              sats.push({ name, satrec, tle1, tle2 });
+            } catch(e) {}
+          }
+          i += 2; // skip the next two lines since we consumed them
         }
-        setSatData(sats);
-      });
+      }
+      setSatData(sats);
+    });
 
     const timer = setInterval(() => setTime(new Date()), 1000); // update every second
     return () => clearInterval(timer);
@@ -89,16 +108,27 @@ function App() {
     else if (name.includes('ONEWEB')) operator = "OneWeb";
     else if (name.includes('NOAA') || name.includes('GOES') || name.includes('EWS-G') || name.includes('SUOMI')) operator = "NOAA (USA)";
     else if (name.includes('DMSP')) operator = "US Department of Defense";
-    else if (name.includes('ISS')) operator = "NASA / Roscosmos";
+    else if (name.includes('ISS') || name.includes('ZARYA')) operator = "NASA / Roscosmos";
     else if (name.includes('GPS') || name.includes('NAVSTAR')) operator = "US Space Force";
     else if (name.includes('GALILEO')) operator = "European Space Agency";
     else if (name.includes('METEOSAT') || name.includes('METOP')) operator = "EUMETSAT (Europe)";
-    else if (name.includes('GLONASS') || name.includes('COSMOS') || name.includes('METEOR') || name.includes('ELEKTRO')) operator = "Roscosmos (Russia)";
+    else if (name.includes('GLONASS') || name.includes('COSMOS') || name.includes('KOSMOS') || name.includes('METEOR') || name.includes('ELEKTRO') || name.includes('RESURS') || name.includes('KONDOR')) operator = "Roscosmos (Russia)";
     else if (name.includes('IRIDIUM')) operator = "Iridium Communications";
-    else if (name.includes('BEIDOU') || name.includes('FENGYUN')) operator = "CNSA (China)";
-    else if (name.includes('INSAT')) operator = "ISRO (India)";
-    else if (name.includes('HIMAWARI')) operator = "JMA (Japan)";
-    else if (name.includes('COMS')) operator = "KARI (South Korea)";
+    else if (name.includes('BEIDOU') || name.includes('FENGYUN') || name.includes('YAOGAN') || name.includes('GAOFEN') || name.includes('SHIJIAN') || name.includes('TIANHUI') || name.includes('CHUANGXIN')) operator = "CNSA (China)";
+    else if (name.includes('INSAT') || name.includes('CARTOSAT') || name.includes('GSAT')) operator = "ISRO (India)";
+    else if (name.includes('HIMAWARI') || name.includes('ALOS')) operator = "JAXA (Japan)";
+    else if (name.includes('COMS') || name.includes('KOREASAT')) operator = "KARI (South Korea)";
+    else if (name.includes('FLOCK') || name.includes('SKYSAT') || name.includes('PELICAN')) operator = "Planet Labs";
+    else if (name.includes('LEMUR')) operator = "Spire Global";
+    else if (name.includes('INTELSAT') || name.includes('GALAXY')) operator = "Intelsat";
+    else if (name.includes('SES') || name.includes('ASTRA') || name.includes('O3B')) operator = "SES";
+    else if (name.includes('EUTELSAT') || name.includes('HOTBIRD')) operator = "Eutelsat";
+    else if (name.includes('GLOBALSTAR')) operator = "Globalstar";
+    else if (name.includes('CYGNUS') || name.includes('DRAGON')) operator = "Commercial Resupply (SpaceX / Northrop)";
+    else if (name.includes('HUBBLE') || name.includes('HST') || name.includes('CHANDRA') || name.includes('SWIFT')) operator = "NASA Astrophysics";
+    else if (name.includes('TIANGONG') || name.includes('CSS')) operator = "China Manned Space Agency";
+    else if (name.includes('AMAZONAS') || name.includes('HISPASAT')) operator = "Hispasat";
+    else operator = "Various / Commercial / Classified";
   }
 
   // Performance optimization: Cache the 3D geometries and materials
@@ -107,6 +137,14 @@ function App() {
   const baseMaterial = useMemo(() => new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.6 }), []);
   const selectedMaterial = useMemo(() => new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 1 }), []);
 
+  if (showSplash) {
+    return (
+      <div className="splash-screen">
+        <img src="/T5SProjectBackground.png" alt="T5S Background" className="splash-bg" />
+      </div>
+    );
+  }
+
   return (
     <div className="app-container">
       <div className="header">
@@ -114,15 +152,15 @@ function App() {
           <h1>TYSON Malik Satellite Radar</h1>
           <p>malik.myt5s.tysonmediagroup.org</p>
         </div>
-        <div className="live-badge">
-          <div className="pulse"></div> LIVE
+        <div className="header-right">
+          <div className="live-badge">
+            <div className="pulse"></div> LIVE
+          </div>
+          <img src="/T5SNEWLOGOFORGEMINI.png" alt="T5S Logo" className="header-logo" />
         </div>
       </div>
       
       <div className="bottom-panel">
-        <div className="watermark-logo">
-          <img src="/logo.png" alt="T5S Watermark" />
-        </div>
         <div className="stats-panel">
           <div><strong>ACTIVE CONTACTS:</strong> {satPositions.length}</div>
           <div><strong>SYS TIME:</strong> {time.toISOString().split('T')[1].split('.')[0]} UTC</div>
@@ -130,13 +168,13 @@ function App() {
       </div>
 
       {activeSat && (
-        <div className="sat-info-panel">
+        <div className="sat-info-panel glass-panel">
           <div className="sat-info-header">
             <h3>{activeSat.name}</h3>
             <button onClick={() => setSelectedSatName(null)}>×</button>
           </div>
           <div className="sat-info-body">
-            <p style={{borderBottom: '1px solid rgba(255, 51, 102, 0.3)', paddingBottom: '10px', marginBottom: '10px'}}>
+            <p className="operator-row">
               <strong>OPERATOR:</strong> {operator}
             </p>
             <p><strong>LAT:</strong> {activeSat.lat.toFixed(4)}°</p>
@@ -147,7 +185,7 @@ function App() {
         </div>
       )}
 
-      <div className="roster-panel">
+      <div className="roster-panel glass-panel">
         <div className="roster-header">SATELLITE ROSTER</div>
         <div className="roster-list">
           {satPositions.map((sat, i) => (
@@ -167,14 +205,16 @@ function App() {
         </div>
       </div>
 
-      <div className="watermark-logo">
-        <img src="/logo.png" alt="T5S Watermark" />
-      </div>
+      <img 
+        src="/TYSONMediaGroupBanner.png" 
+        alt="TYSON Media Group Banner" 
+        className="map-banner-logo" 
+      />
 
       <Globe
         ref={globeEl}
         globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
-        backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
+        backgroundColor="rgba(0,0,0,0)"
         objectsData={satPositions}
         objectLat="lat"
         objectLng="lng"
