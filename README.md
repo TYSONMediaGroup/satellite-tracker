@@ -1,16 +1,43 @@
-# React + Vite
+<p align="center">
+  <a href="https://tysonmediagroup.org">
+    <img src="https://raw.githubusercontent.com/TYSONMediaGroup/tysonmediagroup.org.myt5s.app/main/assets/LOGOSFORGEMINI/TYSONMediaGroupBanner.png" alt="TYSON Media Group" width="700">
+  </a>
+</p>
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+<h1 align="center">Satellite Tracker 3D</h1>
 
-Currently, two official plugins are available:
+<p align="center">
+  <a href="https://react.dev"><img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black" alt="React 19"></a>
+  <a href="https://threejs.org"><img src="https://img.shields.io/badge/Three.js-3D-black?logo=threedotjs&logoColor=white" alt="Three.js"></a>
+  <a href="https://vite.dev"><img src="https://img.shields.io/badge/Vite-8.0-646CFF?logo=vite&logoColor=white" alt="Vite"></a>
+  <a href="https://github.com/shashwatak/satellite-js"><img src="https://img.shields.io/badge/Orbital%20Math-satellite.js-007ACC" alt="satellite.js"></a>
+  <a href="https://tysonmediagroup.org"><img src="https://img.shields.io/badge/TYSON-Media%20Group-007ACC" alt="TYSON Media Group"></a>
+</p>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Real-time 3D satellite orbit visualization and orbital mechanics tracker built on React 19, Three.js, `react-globe.gl`, and `satellite.js`.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Features
 
-## Expanding the Oxlint configuration
+- **Real-time Orbital Propagation**: SGP4/SDP4 orbital calculations powered by `satellite.js`.
+- **Interactive 3D Earth**: Fully interactive globe with realistic atmospheric glow, land topography, and coordinate overlays.
+- **Trajectory Visuals**: Orbital paths, ground tracks, and sensor visibility cones.
+- **Fast Developer Experience**: Powered by Vite with Hot Module Replacement (HMR).
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## Getting Started
+
+```bash
+# Clone the repository
+git clone https://github.com/TYSONMediaGroup/satellite-tracker.git
+cd satellite-tracker
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+```
